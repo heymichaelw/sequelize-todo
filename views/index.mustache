@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>To Do List</title>
+  </head>
+  <body>
+    <form class="" action="/" method="post">
+      <input type="text" name="title" value="" placeholder="Title">
+      <input type="number" name="priority" value="" placeholder="Priority">
+      <input type="date" name="due_date" value="" placeholder="Due Date">
+      <input type="text" name="assignee" value="" placeholder="Assignee">
+      <input type="submit" name="" value="Add"><br>
+    </form>
+    {{#model}}
+      {{^completed}}
+        <br>
+        <form class="" action="/complete/{{id}}" method="post">
+          <input type="submit" name="complete" value="Mark Complete">
+          <label for="complete">{{title}}</label>
+        </form>
+        <form class="" action="/update/{{id}}" method="post">
+          <input type="submit" name="edit" value="Edit Task">
+        </form>
+        <br>
+      {{/completed}}
+    {{/model}}
+
+      <h4>Completed Tasks</h4>
+      {{#model}}
+      {{#completed}}
+        {{title}}
+        <br>
+      {{/completed}}
+      {{/model}}
+  </body>
+</html>
