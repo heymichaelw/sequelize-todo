@@ -1,8 +1,10 @@
 const express = require('express');
 const mustacheExpress = require('mustache-express');
+const models = require('./models');
 const bodyParser = require('body-parser');
+
+
 const app = express();
-var completedTasks = [];
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended : false}));
@@ -10,33 +12,59 @@ app.engine('mustache', mustacheExpress());
 app.set('view engine', 'mustache');
 app.set('views', './views');
 
-app.get('/', function(req, res){
-  var idx=0,
-  context = {
-    todoList : todoList,
-    completedTasks : completedTasks,
-    id: function(){
-      return idx++;
-    }
-  };
 
-  res.render('index', context);
+app.get('/', function(req, res){
+  models.Todo.findAll().then(function(todos){
+      res.render('index', {model:todos});
+  });
 });
 
 app.post('/', function(req, res){
-  var task = req.body.todo;
-  todoList.push(task);
+  models.Todo.create({
+    title: req.body.title,
+    priority: req.body.priority,
+    due: new Date(req.body.due_date),
+    assignee: req.body.assignee
+  });
   res.redirect('/');
 });
 
-app.post('/todo/:id/complete/', function(req, res){
-  var id = Number(req.params.id);
-  var selection = todoList[id];
-  completedTasks.push(selection);
-  todoList.splice(id, 1);
+app.post('/complete/:id', function(req, res){
+  models.Todo.findOne({
+    where: {
+      id: req.params.id
+    }
+  }).then(function(todo){
+    todo.completed = true;
+    todo.save();  //allowing attribute to persist in database
+  });
   res.redirect('/');
 });
 
-app.listen(3000, function(){
-  console.log('Express app listening for connections!');
+app.post('/update/:id', function(req, res){
+  models.Todo.findOne({
+    where: {
+      id: req.params.id
+    }
+  }).then(function(todo){
+    res.render('update', {model:todo});
+  });
 });
+
+app.post('/edit/:id', function(req, res){
+  models.Todo.findOne({
+    where: {
+      id: req.params.id
+    }
+  }).then(function(todo){
+    todo.title = req.body.title;
+    todo.priority = req.body.priority;
+    todo.due = new Date(req.body.due_date);
+    todo.assignee = req.body.assignee;
+    todo.save();
+  });
+  res.redirect('/');
+});
+
+
+app.listen(3000);
