@@ -2,12 +2,12 @@
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    queryInterface.changeColumn(
+    return queryInterface.changeColumn(
       'Todos',
-      'assignee',
+      'userId',
     {
-      type: Sequelize.STRING,
-      defaultValue: "me"
+      type: Sequelize.INTEGER,
+      allowNull: false
     }
   );
   },
@@ -17,7 +17,8 @@ module.exports = {
       'Todos',
       'assignee',
     {
-      defaultValue: null
+      type: Sequelize.INTEGER,
+      allowNull: null
     }
   );
 }

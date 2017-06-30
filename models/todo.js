@@ -5,13 +5,12 @@ module.exports = function(sequelize, DataTypes) {
     priority: DataTypes.INTEGER,
     due: DataTypes.DATEONLY,
     completed: DataTypes.BOOLEAN,
-    assignee: DataTypes.STRING
-  }, {
-    classMethods: {
-      associate: function(models) {
-      
-      }
-    }
-  });
+    assignee: DataTypes.STRING,
+    userId: DataTypes.INTEGER
+  }, {});
+  Todo.associate=function(models){
+    Todo.belongsTo(models.User, {foreignKey: 'userId'});
+    Todo.belongsToMany(models.User, {through: 'UserTodos'});
+  };
   return Todo;
 };
