@@ -21,6 +21,7 @@ app.get('/', function(req, res){
 
 app.post('/', function(req, res){
   models.Todo.create({
+    
     title: req.body.title,
     priority: req.body.priority,
     due: new Date(req.body.due_date),
